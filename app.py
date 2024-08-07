@@ -54,10 +54,5 @@ def on_leave(data):
     leave_room(game_id)
     emit('user_left', {'username': username}, room=game_id)
 
-@socketio.on('start_timer')
-def start_timer(data):
-    game_id = data['game_id']
-    emit('timer_started', room=game_id)
-
 if __name__ == '__main__':
     socketio.run(app, debug=True)
