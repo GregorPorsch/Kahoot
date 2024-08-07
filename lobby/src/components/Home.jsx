@@ -9,8 +9,14 @@ function Home({ socket }) {
 
   const createGame = async () => {
     const response = await axios.post("http://localhost:5000/create_game");
-    setGameId(response.data.game_id);
-    navigate(`/game/${response.data.game_id}`);
+    if (response.data.status === "success") {
+      console.log("Spiel erstellt.");
+      setGameId(response.data.game_id);
+      socket.emit("create", { game_id: response.data.game_id });
+      navigate(`/game/${response.data.game_id}`);
+    } else {
+      alert("Fehler beim Erstellen des Spiels.");
+    }
   };
 
   return (

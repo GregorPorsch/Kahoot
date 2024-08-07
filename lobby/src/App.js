@@ -5,7 +5,10 @@ import io from "socket.io-client";
 import Home from "./components/Home";
 import Game from "./components/Game";
 
-const socket = io("http://localhost:5000");
+const socket = io("http://localhost:5000", {
+  transports: ["websocket", "polling"],
+  withCredentials: true,
+});
 
 function App() {
   return (
