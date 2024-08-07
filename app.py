@@ -10,6 +10,10 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 games = {}
 
+@app.route('/get_all_games', methods=['GET'])  
+def get_all_games():
+    return jsonify(games)
+
 @app.route('/create_game', methods=['POST'])
 def create_game():
     game_id = ''.join([str(random.randint(0, 9)) for _ in range(6)])
@@ -49,6 +53,11 @@ def on_leave(data):
     game_id = data['game_id']
     leave_room(game_id)
     emit('user_left', {'username': username}, room=game_id)
+
+@socketio.on('start_timer')
+def start_timer(data):
+    game_id = data['game_id']
+    emit('timer_started', room=game_id)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
