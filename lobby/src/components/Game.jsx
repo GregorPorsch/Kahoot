@@ -19,12 +19,18 @@ function Game({ socket }) {
 
     return () => {
       socket.off("user_joined");
+      socket.off("user_left");
     };
   });
+
+  const startGame = () => {
+    socket.emit("start", { game_id: gameId });
+  };
 
   return (
     <div>
       <h1>Game {gameId}</h1>
+      <button onClick={startGame}>Start Game</button>
       <ul>
         {messages.map((message, index) => (
           <li key={index}>{message}</li>
