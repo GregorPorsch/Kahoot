@@ -71,5 +71,11 @@ def on_create(data):
     game_id = data['game_id']
     join_room(game_id)
 
+@socketio.on('start')
+def on_start(data):
+    game_id = data['game_id']
+    print(f'Starting game {game_id}')
+    emit('game_started', room=game_id)
+
 if __name__ == '__main__':
     socketio.run(app, debug=True)
