@@ -17,9 +17,14 @@ function Game({ username, setJoined, socket }) {
       console.log(`${data.username} hat das Spiel verlassen.`);
     });
 
+    socket.on("game_started", (data) => {
+      console.log(`Spiel ${gameId} gestartet.`);
+    });
+
     return () => {
       socket.off("user_joined");
       socket.off("user_left");
+      socket.off("game_started");
     };
   }, [socket]);
 
