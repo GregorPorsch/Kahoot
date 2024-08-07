@@ -37,7 +37,7 @@ function Game({ username, setJoined, socket }) {
 
   return (
     <div>
-      <h1>Spiel {gameId}</h1>
+      <h1>Game {gameId}</h1>
       <button onClick={leaveGame}>Leave Game</button>
     </div>
   );
