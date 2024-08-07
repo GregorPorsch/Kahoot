@@ -22,7 +22,7 @@ function App() {
     <div className="App">
       <h1>Kahoot Lobby</h1>
       <div>
-        <button onClick={createGame}>Spiel erstellen</button>
+        <button onClick={createGame}>Create Game</button>
       </div>
       <ul>
         {messages.map((message, index) => (
