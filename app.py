@@ -5,7 +5,7 @@ from flask_cors import CORS
 import random
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}) 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 games = {}
@@ -16,9 +16,19 @@ def get_all_games():
 
 @app.route('/create_game', methods=['POST'])
 def create_game():
-    game_id = ''.join([str(random.randint(0, 9)) for _ in range(6)])
-    games[game_id] = []
-    return jsonify({'game_id': game_id})
+    try:
+        game_id = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+        games[game_id] = []
+        print(f"Game ID: {game_id}") 
+        sid = request.sid if hasattr(request, 'sid') else None
+        if sid:
+            join_room(game_id, sid=sid)
+        else:
+            print("No sid available in the current context")
+        return {"status": "success", "game_id": game_id}
+    except Exception as e:
+        print(f"Error in create_game: {e}")  # Fehlerprotokollierung
+        return {"status": "error", "message": str(e)}
 
 @app.route('/join_game', methods=['POST'])
 def join_game():
@@ -45,6 +55,7 @@ def on_join(data):
     username = data['username']
     game_id = data['game_id']
     join_room(game_id)
+    print(f'{username} joined {game_id}')
     emit('user_joined', {'username': username}, room=game_id)
 
 @socketio.on('leave')
@@ -52,7 +63,13 @@ def on_leave(data):
     username = data['username']
     game_id = data['game_id']
     leave_room(game_id)
+    print(f'{username} left {game_id}')
     emit('user_left', {'username': username}, room=game_id)
+
+@socketio.on('create')
+def on_create(data):
+    game_id = data['game_id']
+    join_room(game_id)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
