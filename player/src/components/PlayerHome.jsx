@@ -3,9 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
-function Home({ username, setUsername, joined, setJoined, socket }) {
-  const [gameId, setGameId] = useState("");
-
+function Home({ username, setUsername, gameId, setGameId, joined, setJoined, socket }) {
   const navigate = useNavigate();
 
   const joinGame = async () => {
@@ -13,12 +11,14 @@ function Home({ username, setUsername, joined, setJoined, socket }) {
       game_id: gameId,
       username,
     });
-    if (response.data.status === "joined") {
+    if (response.data.status === "success") {
+      // Benachrichtigung der anderen Clients über Beitritt über app.py
       socket.emit("join", { game_id: gameId, username });
       setJoined(true);
       navigate(`/game/${gameId}`);
     } else {
-      alert("Spiel-ID nicht gefunden.");
+      // Fehlermeldung ausgeben
+      alert(response.data.message);
     }
   };
 
