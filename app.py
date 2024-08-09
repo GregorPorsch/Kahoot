@@ -9,6 +9,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 games = {}
+scores = {}
 
 # Zahlen sind die eindeutigen Frage-IDs
 # -> Gruppierung einer Gruppe von Fragen
@@ -31,6 +32,7 @@ def create_game():
         while game_id in games:
             game_id = ''.join([str(random.randint(0, 9)) for _ in range(6)])
         games[game_id] = []
+        scores[game_id] = {}
         return {"status": "success", "game_id": game_id}
     except Exception as e:
         print(f"Error in create_game: {e}") 
@@ -45,6 +47,7 @@ def join_game():
         username = data['username']
         if game_id in games:
             games[game_id].append(username)
+            scores[game_id][username] = 0
             return jsonify({'status': 'success'})
         else:
             return jsonify({'status': 'error', 'message': 'Game not found'})
@@ -81,15 +84,35 @@ def get_question(question_id, question_index):
 def check_answer():
     data = request.json
     game_id = data['game_id']
+    username = data['username']
     question_id = data['question_id']
     question_index = int(data['question_index'])
     answer = data['answer']
+    answer_time = float(data['answer_time'])
     if question_id in questions and question_index < len(questions[question_id]):
         correct_answer = questions[question_id][question_index]['answer']
-        print(f'Answer: {answer}, Correct Answer: {correct_answer}')
-        return jsonify({'status': 'success', 'correct': answer == correct_answer})
-    print(f'Ungültige Frage oder Index: {question_id}, {question_index}')
-    return jsonify({'status': 'error', 'message': 'Ungültige Frage oder Index'})
+        if answer == correct_answer:
+            points = int((10 - answer_time) * 100)
+            scores[game_id][username] += points
+            return jsonify({'status': 'success', 'correct': True, 'points': points})
+        return jsonify({'status': 'success', 'correct': False, 'points': 0})
+    return jsonify({'status': 'error', 'message': 'Invalid question or index'})
+
+@app.route('/get_scores', methods=['POST'])
+def get_scores():
+    data = request.json
+    game_id = data['game_id']
+    if game_id in scores:
+        return jsonify({'status': 'success', 'scores': scores[game_id]})
+    return jsonify({'status': 'error', 'message': 'Game not found'})
+
+@app.route('/get_players', methods=['POST'])
+def get_players():
+    data = request.json
+    game_id = data['game_id']
+    if game_id in games:
+        return jsonify({'status': 'success', 'players': games[game_id]})
+    return jsonify({'status': 'error', 'message': 'Game not found'})
 
 # Aufgerufen vom Player Client
 # "user_joined" wird an alle Clients (Lobby/Player) gesendet
