@@ -6,6 +6,7 @@ import io from "socket.io-client";
 import Home from "./components/LobbyHome";
 import Game from "./components/LobbyGame";
 import Question from "./components/LobbyQuestion";
+import Leaderboard from "./components/LobbyLeaderboard";
 
 const socket = io("http://localhost:5000", {
   transports: ["websocket", "polling"],
@@ -27,6 +28,7 @@ function App() {
           path="/question/:questionId/:questionIndex"
           element={<Question socket={socket} gameId={gameId} setGameId={setGameId} />}
         />
+        <Route path="/lobbyleaderboard/:gameId" element={<Leaderboard socket={socket} />} />
       </Routes>
     </Router>
   );

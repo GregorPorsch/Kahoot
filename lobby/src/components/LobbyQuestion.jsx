@@ -4,7 +4,7 @@ import axios from "axios";
 
 function Question({ socket, gameId, setGameId }) {
   const [question, setQuestion] = useState(null);
-  const [timer, setTimer] = useState(5);
+  const [timer, setTimer] = useState(10);
   const [showNextButton, setShowNextButton] = useState(false);
 
   const { questionId, questionIndex } = useParams();
@@ -20,7 +20,7 @@ function Question({ socket, gameId, setGameId }) {
         setQuestion(response.data.question);
       } else if (response.data.status === "end") {
         alert("Quiz has ended!");
-        navigate("/");
+        navigate(`/lobbyleaderboard/${gameId}`);
       } else {
         alert("Error loading question");
       }
@@ -57,7 +57,7 @@ function Question({ socket, gameId, setGameId }) {
       question_id: questionId,
       question_index: parseInt(questionIndex) + 1,
     });
-    setTimer(5);
+    setTimer(10);
     navigate(`/question/${questionId}/${parseInt(questionIndex) + 1}`);
   };
 

@@ -53,7 +53,18 @@ function Game({ socket, gameId, setGameId, questionIndex, setQuestionIndex }) {
   // Spiel wird gestartet
   // "game_started" wird an die Player Clients gesendet in app.py
   const startGame = () => {
-    socket.emit("start", { game_id: gameId });
+    const checkPlayers = async () => {
+      const players = await axios.post("http://localhost:5000/get_players", {
+        game_id: gameId,
+      });
+      console.log(players.data);
+      if (players.data.status === "success" && players.data.players.length > 1) {
+        socket.emit("start", { game_id: gameId });
+      } else {
+        alert("Not enough players to start game");
+      }
+    };
+    checkPlayers();
   };
 
   return (
