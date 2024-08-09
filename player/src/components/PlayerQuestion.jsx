@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+
 import axios from "axios";
 
 function PlayerQuestion({ username, gameId, setGameId, socket }) {
   const [question, setQuestion] = useState(null);
-  const [timer, setTimer] = useState(5);
+  const [timer, setTimer] = useState(10);
   const [selectedAnswer, setSelectedAnswer] = useState("");
+  const [startTime, setStartTime] = useState(null);
+  const [answerTime, setAnswerTime] = useState(null);
+  const [totalScore, setTotalScore] = useState(0);
 
   const { questionId, questionIndex } = useParams();
   const navigate = useNavigate();
@@ -18,6 +22,8 @@ function PlayerQuestion({ username, gameId, setGameId, socket }) {
       );
       if (response.data.status === "success") {
         setQuestion(response.data.question);
+        setSelectedAnswer("");
+        setStartTime(Date.now());
       } else if (response.data.status === "end") {
         alert("Quiz has ended!");
         navigate("/");
@@ -26,6 +32,19 @@ function PlayerQuestion({ username, gameId, setGameId, socket }) {
       }
     };
     fetchQuestion();
+
+    const fetchTotalScore = async () => {
+      const response = await axios.post("http://localhost:5000/get_scores", {
+        game_id: gameId,
+      });
+      if (response.data.status === "success") {
+        setTotalScore(response.data.scores[username]);
+      } else {
+        alert("Error loading total score");
+      }
+    };
+
+    fetchTotalScore();
 
     // Setup des Timers
     const interval = setInterval(() => {
@@ -44,15 +63,18 @@ function PlayerQuestion({ username, gameId, setGameId, socket }) {
   // Wenn Timer abgelaufen -> Checken der Antwort
   useEffect(() => {
     if (timer === 0) {
+      console.log((answerTime - startTime) / 1000);
       const checkAnswer = async () => {
         const response = await axios.post("http://localhost:5000/check_answer", {
           game_id: gameId,
+          username: username,
           question_id: questionId,
           question_index: questionIndex,
           answer: selectedAnswer,
+          answer_time: (answerTime - startTime) / 1000,
         });
         if (response.data.status === "success") {
-          alert(response.data.correct ? "Correct!" : "Incorrect!");
+          alert(response.data.correct ? `Correct! Points: ${response.data.points}` : "Incorrect!");
         } else {
           alert("Error checking answer");
         }
@@ -67,7 +89,7 @@ function PlayerQuestion({ username, gameId, setGameId, socket }) {
   useEffect(() => {
     const handleNextQuestion = (data) => {
       console.log("Next question");
-      setTimer(5);
+      setTimer(10);
       navigate(`/player_question/${questionId}/${parseInt(questionIndex) + 1}`);
     };
 
@@ -83,14 +105,25 @@ function PlayerQuestion({ username, gameId, setGameId, socket }) {
 
   return (
     <div>
+      <h3>Total Score: {totalScore}</h3>
       <h1>{question.question}</h1>
-      <ul>
-        {question.options.map((option, index) => (
-          <button key={index} onClick={() => setSelectedAnswer(option)}>
-            {option}
-          </button>
-        ))}
-      </ul>
+      {selectedAnswer ? (
+        <div>Selected answer: {selectedAnswer}</div>
+      ) : (
+        <ul>
+          {question.options.map((option, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setAnswerTime(Date.now());
+                setSelectedAnswer(option);
+              }}
+            >
+              {option}
+            </button>
+          ))}
+        </ul>
+      )}
       <div>Time left: {timer}</div>
     </div>
   );
