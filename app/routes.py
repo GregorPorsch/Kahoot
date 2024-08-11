@@ -1,27 +1,19 @@
-# app.py
-from flask import Flask, request, jsonify
-from flask_socketio import SocketIO, join_room, leave_room, emit
-from flask_cors import CORS
-import random
+from app import app, socketio, db
+from app.models import Question
 
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}}) 
-socketio = SocketIO(app, cors_allowed_origins="*")
+from flask import request, jsonify
+from flask_socketio import SocketIO, join_room, leave_room, emit
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+
+import random
 
 games = {}
 scores = {}
 
 # Zahlen sind die eindeutigen Frage-IDs
 # -> Gruppierung einer Gruppe von Fragen
-questions = {
-    "1": [
-        {"question": "What is 2+2?", "options": ["3", "4", "5", "6"], "answer": "4"},
-        {"question": "What is the capital of France?", "options": ["Berlin", "London", "Paris", "Rome"], "answer": "Paris"},
-        {"question": "What is the largest planet in our solar system?", "options": ["Earth", "Jupiter", "Mars", "Venus"], "answer": "Jupiter"},
-        {"question": "What is the largest mammal in the world?", "options": ["Elephant", "Giraffe", "Blue Whale", "Hippopotamus"], "answer": "Blue Whale"},
-        {"question": "What is the largest ocean in the world?", "options": ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Southern Ocean"], "answer": "Pacific Ocean"},
-    ]
-}
+questions = {}
 
 # Aufgerunfen vom Lobby Client
 @app.route('/create_game', methods=['POST'])
@@ -72,12 +64,33 @@ def leave_game():
 # Rückgage Status: success, end, error
 @app.route('/get_question/<question_id>/<question_index>', methods=['GET'])
 def get_question(question_id, question_index):
+    print(questions)
+    question_id = int(question_id)
     question_index = int(question_index)
     if question_id in questions and question_index < len(questions[question_id]):
         return jsonify({'status': 'success', 'question': questions[question_id][question_index]})
-    elif question_index >= len(questions[question_id]):
+    elif question_id in questions and question_index >= len(questions[question_id]):
         return jsonify({'status': 'end', 'message': 'No more questions'})
-    return jsonify({'status': 'error', 'message': 'Question not found'})
+    try:
+        question_list = Question.query.filter_by(question_id=question_id).order_by(Question.question_index).all()
+        if question_list:
+            question_data = [
+                {
+                    "question_index": q.question_index,
+                    "question": q.question,
+                    "options": [q.option1, q.option2, q.option3, q.option4],
+                    "answer": q.answer
+                }
+                for q in question_list
+            ]
+            questions[question_id] = question_data
+            print(questions)
+            return jsonify( {"status": "success", "question": question_data})
+        else:
+            print("Error loading questions")
+    except Exception as e:
+        print(f"Error in get_question: {e}")
+        return jsonify({'status': 'error', 'message': 'Question not found'})    
 
 # Aufgerufen vom Player Client
 @app.route('/check_answer', methods=['POST'])
@@ -85,7 +98,7 @@ def check_answer():
     data = request.json
     game_id = data['game_id']
     username = data['username']
-    question_id = data['question_id']
+    question_id = int(data['question_id'])
     question_index = int(data['question_index'])
     answer = data['answer']
     answer_time = float(data['answer_time'])
@@ -163,14 +176,13 @@ def on_create(data):
 # "game_started" wird an die Player Clients gesendet
 @socketio.on('start')
 def on_start(data):
-    try:
-        game_id = data['game_id']
-        if game_id in games:
-            emit('game_started', room=game_id)
-        else:
-            print(f'Game not found: {game_id}')
-    except Exception as e:
-        print(f'Error in start: {e}')
+    game_id = data['game_id']
+    question_id = data['question_id']
+    question_index = data['question_index']
+    if game_id in games:
+        emit('game_started', {"status": "success", "question_id": question_id, "question_index": question_index }, room=game_id)
+    else:
+        print(f'Game not found: {game_id}')
 
 # Aufgerufen vom Lobby Client
 # "next_question" wird (nur) an die Player Clients gesendet
@@ -188,7 +200,3 @@ Für Testzwecke
 @app.route('/get_all_games', methods=['GET'])  
 def get_all_games():
     return jsonify(games)
-
-
-if __name__ == '__main__':
-    socketio.run(app, debug=True)
