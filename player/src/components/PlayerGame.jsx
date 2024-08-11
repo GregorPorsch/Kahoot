@@ -26,8 +26,13 @@ function Game({ username, gameId, setGameId, setJoined, socket }) {
     // Spiel wurde erfolgreich gestartet
     // Weiterleitung zur PlayerQuestion Seite
     socket.on("game_started", (data) => {
-      console.log(`Spiel ${gameId} gestartet.`);
-      navigate(`/player_question/${questionId}/0`);
+      console.log(data);
+      if (data.status === "success") {
+        console.log(`Spiel ${gameId} erfolgreich gestartet.`);
+        navigate(`/player_question/${data.question_id}/${data.question_index}`);
+      } else {
+        console.log("Fehler beim Starten des Spiels.");
+      }
     });
 
     socket.on("game_ended", () => {
@@ -46,7 +51,7 @@ function Game({ username, gameId, setGameId, setJoined, socket }) {
   const leaveGame = async () => {
     const response = await axios.post("http://localhost:5000/leave_game", {
       game_id: gameId,
-      username,
+      username: username,
     });
     if (response.data.status === "success") {
       socket.emit("leave", { game_id: gameId, username });

@@ -26,7 +26,7 @@ function PlayerQuestion({ username, gameId, setGameId, socket }) {
         setStartTime(Date.now());
       } else if (response.data.status === "end") {
         alert("Quiz has ended!");
-        navigate("/");
+        navigate(`/player_leaderboard/${gameId}`);
       } else {
         alert("Error loading question");
       }
