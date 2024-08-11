@@ -1,11 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Game({ socket, gameId, setGameId, questionIndex, setQuestionIndex }) {
   const navigate = useNavigate();
+  const [category, setCategory] = useState("maths");
 
-  const questionId = "1";
+  const categoryToQuestionId = {
+    maths: "0",
+    geography: "1",
+    football: "2",
+  };
+
+  const questionId = categoryToQuestionId[category];
 
   useEffect(() => {
     // Konsolenausgabe, wenn ein Player Client dem Spiel beitritt
@@ -52,14 +59,14 @@ function Game({ socket, gameId, setGameId, questionIndex, setQuestionIndex }) {
 
   // Spiel wird gestartet
   // "game_started" wird an die Player Clients gesendet in app.py
-  const startGame = () => {
+  const startGame = async () => {
     const checkPlayers = async () => {
       const players = await axios.post("http://localhost:5000/get_players", {
         game_id: gameId,
       });
       console.log(players.data);
-      if (players.data.status === "success" && players.data.players.length > 1) {
-        socket.emit("start", { game_id: gameId });
+      if (players.data.status === "success" && players.data.players.length > 0) {
+        socket.emit("start", { game_id: gameId, question_id: questionId, question_index: 0 });
       } else {
         alert("Not enough players to start game");
       }
@@ -67,9 +74,22 @@ function Game({ socket, gameId, setGameId, questionIndex, setQuestionIndex }) {
     checkPlayers();
   };
 
+  const handleCategoryChange = (event) => {
+    console.log(event.target.value);
+    setCategory(event.target.value);
+  };
+
   return (
     <div>
       <h1>Game {gameId}</h1>
+      <div>
+        <h2>Please pick a category!</h2>
+        <select value={category} onChange={handleCategoryChange}>
+          <option value="maths">Maths</option>
+          <option value="geography">Geography</option>
+          <option value="football">Football</option>
+        </select>
+      </div>
       <button onClick={startGame}>Start Game</button>
       <button onClick={leaveGame}>Leave Game</button>
     </div>

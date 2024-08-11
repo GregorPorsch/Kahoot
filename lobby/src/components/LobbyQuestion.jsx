@@ -68,9 +68,11 @@ function Question({ socket, gameId, setGameId }) {
     <div>
       <h1>{question.question}</h1>
       <ul>
-        {question.options.map((option, index) => (
-          <li key={index}>{option}</li>
-        ))}
+        {question.options ? (
+          question.options.map((option, index) => <li key={index}>{option}</li>)
+        ) : (
+          <p>Loading...</p>
+        )}
       </ul>
       <div>Time left: {timer}</div>
       {showNextButton && <button onClick={handleNextQuestion}>Next Question</button>}
