@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
+import styles from "./styles/PlayerHome.module.css";
+
 function Home({ username, setUsername, gameId, setGameId, joined, setJoined, socket }) {
   const navigate = useNavigate();
 
@@ -23,22 +25,22 @@ function Home({ username, setUsername, gameId, setGameId, joined, setJoined, soc
   };
 
   return (
-    <div>
-      <h1>Kahoot</h1>
-      <div>
+    <div className={styles.container}>
+      <h1 className={styles.heading}>Kahoot!</h1>
+      <div className={styles.input_field}>
         <input
           type="text"
-          placeholder="Spiel-ID"
+          placeholder="Spiel-PIN"
           value={gameId}
           onChange={(e) => setGameId(e.target.value)}
         />
         <input
           type="text"
-          placeholder="Benutzername"
+          placeholder="Spielername"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <button onClick={joinGame}>Spiel beitreten</button>
+        <button onClick={joinGame}>Eingabe</button>
       </div>
     </div>
   );
