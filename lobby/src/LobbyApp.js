@@ -8,6 +8,8 @@ import Game from "./components/LobbyGame";
 import Question from "./components/LobbyQuestion";
 import Leaderboard from "./components/LobbyLeaderboard";
 
+import "./App.css";
+
 const socket = io("http://localhost:5000", {
   transports: ["websocket", "polling"],
   withCredentials: true,
