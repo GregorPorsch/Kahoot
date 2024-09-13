@@ -5,6 +5,7 @@ class Quiz(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
+    question_count = db.Column(db.Integer, nullable=False, default=0)
     image = db.Column(db.String(255), nullable=False)
     questions = db.relationship('Question', backref='quiz', lazy=True)
 

@@ -14,4 +14,7 @@ def create_app():
     from .routes import register_routes
     register_routes(app)
 
+    from .socket import register_socket_events
+    register_socket_events(socketio)
+
     return app

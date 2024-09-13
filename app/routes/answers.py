@@ -8,6 +8,7 @@ answers_bp = Blueprint('answers', __name__)
 def check_answer():
     try:
         data = request.json
+        print(data)
         game_id = data.get('game_id')
         username = data.get('username')
         quiz_id = data.get('quiz_id')
@@ -15,7 +16,7 @@ def check_answer():
         answer = data.get('answer')
         answer_time = data.get('answer_time')
 
-        if not all([game_id, username, quiz_id, question_index, answer, answer_time]):
+        if not all([game_id, username, quiz_id, question_index, answer_time]):
             return jsonify({'status': 'error', 'message': 'Missing data'}), 400
 
         quiz_id = int(quiz_id)
@@ -33,6 +34,7 @@ def check_answer():
 
         correct_answer = question.answer
         if answer == correct_answer:
+            print("Correct answer!")
             points = max(0, int((10 - answer_time) * 100))
             scores[game_id][username] += points
             return jsonify({'status': 'success', 'correct': True, 'points': points})

@@ -4,7 +4,7 @@ from app import db
 
 questions_bp = Blueprint('questions', __name__)
 
-@questions_bp.route('/questions/get', methods=['GET'])
+@questions_bp.route('/questions/get', methods=['POST'])
 def get_question():
     try:
         data = request.json
@@ -12,21 +12,31 @@ def get_question():
         question_index = data.get('question_index')
 
         if not quiz_id or question_index is None:
+            print("Missing quiz_id or question_index")
             return jsonify({'status': 'error', 'message': 'Missing quiz_id or question_index'}), 400
+        
+        quiz = Quiz.query.filter_by(id=quiz_id).first()
+        if not quiz:
+            print("Quiz not found")
+            return jsonify({'status': 'error', 'message': 'Quiz not found'}), 404
 
-        question = Question.query.filter_by(quiz_id=str(quiz_id), question_index=question_index).first()
+        if int(question_index) > quiz.question_count:
+            print("Quiz has ended")
+            return jsonify({'status': 'end', 'message': 'Quiz has ended'}), 200
+
+        question = Question.query.filter_by(quiz_id=quiz_id, question_index=question_index).first()
         if not question:
+            print("Question not found")
             return jsonify({'status': 'error', 'message': 'Question not found'}), 404
+
+        print(f"Question found: {question}")
 
         question_data = {
             "id": question.id,
             "quiz_id": question.quiz_id,
             "question_index": question.question_index,
             "question": question.question,
-            "option1": question.option1,
-            "option2": question.option2,
-            "option3": question.option3,
-            "option4": question.option4,
+            "options": [question.option1, question.option2, question.option3, question.option4],
             "answer": question.answer
         }
         return jsonify({'status': 'success', 'data': question_data})
@@ -63,7 +73,6 @@ def add_question():
     try:
         data = request.json
         quiz_id = data.get('quiz_id')
-        question_index = data.get('question_index')
         question_text = data.get('question')
         option1 = data.get('option1')
         option2 = data.get('option2')
@@ -71,9 +80,15 @@ def add_question():
         option4 = data.get('option4')
         answer = data.get('answer')
 
-        if not all([quiz_id, question_index, question_text, option1, option2, option3, option4, answer]):
+        if not all([quiz_id, question_text, option1, option2, option3, option4, answer]):
             return jsonify({'status': 'error', 'message': 'Missing data'}), 400
-
+        
+        quiz = Quiz.query.filter_by(id=quiz_id).first()
+        if not quiz:
+            return jsonify({'status': 'error', 'message': 'Quiz not found'}), 404
+        
+        question_index = quiz.question_count + 1
+        quiz.question_count += 1
         new_question = Question(
             quiz_id=quiz_id,
             question_index=question_index,
@@ -139,6 +154,7 @@ def get_all_quizzes():
             {
                 "id": quiz.id,
                 "name": quiz.name,
+                "question_count": quiz.question_count,
                 "image": quiz.image,
             }
             for quiz in quizzes
