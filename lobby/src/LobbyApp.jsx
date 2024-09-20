@@ -7,6 +7,7 @@ import Home from "./pages/LobbyHome";
 import Game from "./pages/LobbyGame";
 import Question from "./pages/LobbyQuestion";
 import Leaderboard from "./pages/LobbyLeaderboard";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/game/:gameId" element={<Game />} />
             <Route path="/quiz" element={<Question />} />
             <Route path="/lobbyleaderboard/:gameId" element={<Leaderboard />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
       </ToastProvider>

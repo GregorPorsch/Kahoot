@@ -6,6 +6,7 @@ import useOnceEffect from "../hooks/useOnceEffect";
 import { handleLeaveGame } from "../utils/handlers";
 import { useToastContext } from "../context/ToastContext";
 
+import styles from "../assets/styles/LobbyLeaderboard.module.css";
 import { toast, Toaster } from "sonner";
 
 function Leaderboard() {
@@ -35,15 +36,19 @@ function Leaderboard() {
   return (
     <div>
       <Toaster richColors position="bottom-center" />
-      <h2>Lobby Leaderboard</h2>
-      <ul>
-        {scores.map(([username, score]) => (
+      <h2>Leaderboard</h2>
+      <ol className={styles.podium}>
+        {scores.slice(0, 3).map(([username, score], index) => (
           <li key={username}>
-            {username}: {score}
+            <div>
+              {username}: {score}
+            </div>
           </li>
         ))}
-      </ul>
-      <button onClick={() => handleLeaveGame(socket, gameId, navigate)}>Back to Home</button>
+      </ol>
+      <button className={styles.leave_button} onClick={() => navigate("/")}>
+        Back to Home
+      </button>
     </div>
   );
 }

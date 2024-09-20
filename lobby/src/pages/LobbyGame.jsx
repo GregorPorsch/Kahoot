@@ -8,6 +8,7 @@ import { handleUserJoined, handleUserLeft } from "../services/socket";
 import { handleGameStarted, handleGameEnded, cleanupSocketEvents } from "../services/socket";
 import useOnceEffect from "../hooks/useOnceEffect";
 
+import styles from "../assets/styles/LobbyGame.module.css";
 import { toast, Toaster } from "sonner";
 
 function Game() {
@@ -17,6 +18,7 @@ function Game() {
 
   const [quizzes, setQuizzes] = useState([]);
   const [selectedQuiz, setSelectedQuiz] = useState(1);
+  const [players, setPlayers] = useState([]);
 
   // Anzeige von Toast-Nachrichten
   useOnceEffect(() => {
@@ -37,8 +39,8 @@ function Game() {
 
   // Socket-Events
   useEffect(() => {
-    handleUserJoined(socket, toast, gameId);
-    handleUserLeft(socket, toast, gameId);
+    handleUserJoined(socket, toast, gameId, setPlayers);
+    handleUserLeft(socket, toast, gameId, setPlayers);
     handleGameStarted(socket, gameId, navigate);
     handleGameEnded(socket, navigate);
 
@@ -48,12 +50,22 @@ function Game() {
   }, []);
 
   return (
-    <div>
+    <div className={styles.container}>
       <Toaster richColors position="bottom-center" />
-      <h1>Game {gameId}</h1>
-      <div>
-        <h2>Please pick a category!</h2>
-        <select onChange={(event) => setSelectedQuiz(event.target.value)}>
+      <div className={styles.header}>
+        <h1>Game PIN: {gameId}</h1>
+      </div>
+
+      <button
+        className={styles.start_button}
+        onClick={() => handleStartGame(socket, gameId, selectedQuiz, navigate)}
+      >
+        Start
+      </button>
+
+      <div className={styles.select_container}>
+        <h2>Please select a category!</h2>
+        <select className={styles.select} onChange={(event) => setSelectedQuiz(event.target.value)}>
           {quizzes.map((quiz) => (
             <option key={quiz.id} value={quiz.id}>
               {quiz.name}
@@ -61,10 +73,20 @@ function Game() {
           ))}
         </select>
       </div>
-      <button onClick={() => handleStartGame(socket, gameId, selectedQuiz, navigate)}>
-        Start Game
+
+      <h2>Players:</h2>
+      <ul className={styles.player_list}>
+        {players.map((player) => (
+          <li key={player}>{player}</li>
+        ))}
+      </ul>
+
+      <button
+        className={styles.leave_button}
+        onClick={() => handleLeaveGame(socket, gameId, navigate)}
+      >
+        Leave Game
       </button>
-      <button onClick={() => handleLeaveGame(socket, gameId, navigate)}>Leave Game</button>
     </div>
   );
 }

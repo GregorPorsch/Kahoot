@@ -3,6 +3,7 @@ import { useAppContext } from "../context/AppContext";
 import { handleCreateGame } from "../utils/handlers";
 import { useToastContext } from "../context/ToastContext";
 
+import styles from "../assets/styles/LobbyHome.module.css";
 import { toast, Toaster } from "sonner";
 
 function Home() {
@@ -11,11 +12,14 @@ function Home() {
   const { setToastContext } = useToastContext();
 
   return (
-    <div className="App">
+    <div className={styles.container}>
       <Toaster richColors position="bottom-center" />
-      <h1>Kahoot Lobby</h1>
+      <h1>Kahoot!</h1>
       <div>
-        <button onClick={() => handleCreateGame(socket, setGameId, setToastContext, navigate)}>
+        <button
+          className={styles.create_button}
+          onClick={() => handleCreateGame(socket, setGameId, setToastContext, navigate)}
+        >
           Create Game
         </button>
       </div>

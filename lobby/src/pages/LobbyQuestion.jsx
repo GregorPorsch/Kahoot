@@ -7,6 +7,7 @@ import { ANSWER_TIME } from "../utils/constants";
 import { handleNextQuestion } from "../utils/handlers";
 import useTimer from "../hooks/useTimer";
 
+import styles from "../assets/styles/LobbyQuestion.module.css";
 import { toast, Toaster } from "sonner";
 
 function Question() {
@@ -44,18 +45,19 @@ function Question() {
   if (!question) return <div>Loading...</div>;
 
   return (
-    <div>
-      <h1>Question: {question.question}</h1>
-      <ul>
-        {question.options ? (
-          question.options.map((option, index) => <li key={index}>{option}</li>)
-        ) : (
-          <p>Loading...</p>
-        )}
-      </ul>
-      <div>Time left: {timer}</div>
+    <div className={styles.container}>
+      <Toaster richColors position="bottom-center" />
+      <div className={styles.timer}>{timer}</div>
+      <h1 className={styles.question}>{question.question}</h1>
+      <div className={styles["options-container"]}>
+        <button className={`${styles.option} ${styles.red}`}>{question.options[0]}</button>
+        <button className={`${styles.option} ${styles.blue}`}>{question.options[1]}</button>
+        <button className={`${styles.option} ${styles.yellow}`}>{question.options[2]}</button>
+        <button className={`${styles.option} ${styles.green}`}>{question.options[3]}</button>
+      </div>
       {showNextButton && (
         <button
+          className={styles["next-button"]}
           onClick={() =>
             handleNextQuestion(
               socket,
