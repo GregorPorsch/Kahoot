@@ -1,0 +1,3 @@
+- Reload -> GameId nicht gelöscht
+- GameId loeschen bei Ende
+- Fragen hinzufuegen
