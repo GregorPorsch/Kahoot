@@ -7,6 +7,7 @@ import Home from "./pages/PlayerHome";
 import Game from "./pages/PlayerGame";
 import Question from "./pages/PlayerQuestion";
 import Leaderboard from "./pages/PlayerLeaderboard";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/game/:gameId" element={<Game />} />
             <Route path="/quiz" element={<Question />} />
             <Route path="/playerleaderboard/:gameId" element={<Leaderboard />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Router>
       </ToastProvider>

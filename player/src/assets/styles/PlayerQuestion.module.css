@@ -1,7 +1,6 @@
 html,
 body {
   height: 100%;
-  margin: 0;
 }
 
 body {
@@ -16,57 +15,91 @@ body {
   background-size: cover;
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.input_field {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  gap: 1rem;
-  padding: 1.25rem;
-  background-color: var(--white);
-  border-radius: 5px;
-  width: 100%;
-  box-shadow: 5px 5px 27px 5px rgba(0, 0, 0, 0.36);
-}
-
-.input_field input,
-.input_field button {
-  font-size: 1.2rem;
-  font-weight: 700;
-  outline: none;
-  border: 3px solid var(--gray-2);
-  border-radius: 5px;
+.question {
   text-align: center;
-  width: 100%;
-  padding: 0.5rem;
-  box-sizing: border-box;
 }
 
-.input_field input:focus {
-  border-color: var(--purple-1);
-  box-shadow: none;
+.options-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  width: 600px;
+  height: 300px;
+  gap: 20px;
 }
 
-.input_field input:focus:hover {
-  border-color: black;
-}
-
-.input_field button {
-  color: white;
-  background-color: var(--gray-3);
-  border: 3px solid var(--gray-3);
-  transition: transform 0.2s, height 0.2s;
-  transform-origin: bottom;
-}
-
-.input_field button:hover {
-  transform: scaleY(0.95);
+.option {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
   cursor: pointer;
+  position: relative;
+}
+
+.option::before {
+  content: "";
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: var(--white);
+}
+
+.option.red {
+  background-color: var(--red-2);
+}
+
+.option.red::before {
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.option.blue {
+  background-color: var(--blue-2);
+}
+
+.option.blue::before {
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.option.yellow {
+  background-color: var(--yellow-2);
+}
+
+.option.yellow::before {
+  clip-path: circle(50% at 50% 50%);
+}
+
+.option.green {
+  background-color: var(--green-2);
+}
+
+.option.green::before {
+  clip-path: inset(12% 12% 12% 12%);
+}
+
+.timer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 2rem;
+  background-color: var(--purple-2);
+  color: white;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+  font-weight: 500;
+  box-shadow: 5px 5px 27px 5px rgba(0, 0, 0, 0.2);
+}
+
+.score {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 2rem;
+  font-size: 1.5rem;
+  font-weight: 500;
 }

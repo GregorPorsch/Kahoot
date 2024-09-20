@@ -1,7 +1,6 @@
 html,
 body {
   height: 100%;
-  margin: 0;
 }
 
 body {
@@ -23,50 +22,64 @@ body {
   justify-content: center;
 }
 
-.input_field {
+.game_information {
+  position: absolute;
+  margin: 0.5rem;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  color: var(--white);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.game_information p {
+  margin: 0;
+  padding: 0;
+}
+
+.wait_message {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
   justify-content: center;
-  gap: 1rem;
-  padding: 1.25rem;
-  background-color: var(--white);
-  border-radius: 5px;
-  width: 100%;
-  box-shadow: 5px 5px 27px 5px rgba(0, 0, 0, 0.36);
+  align-items: center;
 }
 
-.input_field input,
-.input_field button {
+.loader {
+  width: 40px;
+  padding: 8px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--blue-1);
+  --_m: conic-gradient(#0000 10%, #000), linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+  mask: var(--_m);
+  -webkit-mask-composite: source-out;
+  mask-composite: subtract;
+  animation: l3 1s infinite linear;
+}
+@keyframes l3 {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.leave_button {
+  position: absolute;
+  bottom: 0;
+  margin: 6rem;
+  color: white;
   font-size: 1.2rem;
   font-weight: 700;
-  outline: none;
-  border: 3px solid var(--gray-2);
+  background-color: transparent;
+  border: 3px solid var(--white);
   border-radius: 5px;
-  text-align: center;
-  width: 100%;
-  padding: 0.5rem;
-  box-sizing: border-box;
-}
-
-.input_field input:focus {
-  border-color: var(--purple-1);
-  box-shadow: none;
-}
-
-.input_field input:focus:hover {
-  border-color: black;
-}
-
-.input_field button {
-  color: white;
-  background-color: var(--gray-3);
-  border: 3px solid var(--gray-3);
   transition: transform 0.2s, height 0.2s;
   transform-origin: bottom;
+  padding: 0.5rem;
 }
 
-.input_field button:hover {
+.leave_button:hover {
   transform: scaleY(0.95);
   cursor: pointer;
 }

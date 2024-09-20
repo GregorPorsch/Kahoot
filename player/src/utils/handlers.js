@@ -51,3 +51,9 @@ export function handleLeaveGame(socket, username, gameId, setToastContext, navig
     }
   });
 }
+
+export function handleAnswerSelection(setSelectedAnswer, answer, recordSplitTime, setIsWaiting) {
+  setSelectedAnswer(answer);
+  recordSplitTime();
+  setIsWaiting(true);
+}

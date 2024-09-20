@@ -6,6 +6,7 @@ import { useToastContext } from "../context/ToastContext";
 import { cleanupSocketEvents, handleUserJoined, handleUserLeft } from "../services/socket";
 import { handleGameStarted, handleGameEnded } from "../services/socket";
 
+import styles from "../assets/styles/PlayerGame.module.css";
 import { toast, Toaster } from "sonner";
 
 function Game() {
@@ -26,11 +27,21 @@ function Game() {
   }, []);
 
   return (
-    <div>
+    <div className={styles.container}>
       <Toaster richColors position="bottom-center" />
-      <h1>Game {gameId}</h1>
-      <button onClick={() => handleLeaveGame(socket, username, gameId, setToastContext, navigate)}>
-        Leave Game
+      <div className={styles.game_information}>
+        <p>Game PIN: {gameId}</p>
+        <p>Username: {username}</p>
+      </div>
+      <div className={styles.wait_message}>
+        <div className={styles.loader}></div>
+        <p>Bitte warte, bis der Host das Spiel startet...</p>
+      </div>
+      <button
+        className={styles.leave_button}
+        onClick={() => handleLeaveGame(socket, username, gameId, setToastContext, navigate)}
+      >
+        Spiel verlassen
       </button>
     </div>
   );

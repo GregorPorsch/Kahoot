@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getScores } from "../services/api";
-import { handleLeaveGame } from "../utils/handlers";
 import { useAppContext } from "../context/AppContext";
 import { useToastContext } from "../context/ToastContext";
 import useOnceEffect from "../hooks/useOnceEffect";
 
+import styles from "../assets/styles/PlayerLeaderboard.module.css";
 import { toast, Toaster } from "sonner";
 
 function Leaderboard() {
@@ -33,17 +33,21 @@ function Leaderboard() {
   }, [gameId]);
 
   return (
-    <div>
+    <div className={styles.container}>
       <Toaster richColors position="bottom-center" />
-      <h2>Player Leaderboard</h2>
-      <ul>
-        {scores.map(([username, score]) => (
+      <h2>Leaderboard</h2>
+      <ol className={styles.podium}>
+        {scores.slice(0, 3).map(([username, score], index) => (
           <li key={username}>
-            {username}: {score}
+            <div>
+              {username}: {score}
+            </div>
           </li>
         ))}
-      </ul>
-      <button onClick={() => navigate("/")}>Back to Home</button>
+      </ol>
+      <button className={styles.leave_button} onClick={() => navigate("/")}>
+        Back to Home
+      </button>
     </div>
   );
 }

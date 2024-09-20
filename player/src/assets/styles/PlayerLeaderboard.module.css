@@ -1,7 +1,6 @@
 html,
 body {
   height: 100%;
-  margin: 0;
 }
 
 body {
@@ -23,50 +22,24 @@ body {
   justify-content: center;
 }
 
-.input_field {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  gap: 1rem;
-  padding: 1.25rem;
-  background-color: var(--white);
-  border-radius: 5px;
-  width: 100%;
-  box-shadow: 5px 5px 27px 5px rgba(0, 0, 0, 0.36);
-}
-
-.input_field input,
-.input_field button {
+.leave_button {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 5rem;
+  color: white;
   font-size: 1.2rem;
   font-weight: 700;
-  outline: none;
-  border: 3px solid var(--gray-2);
+  background-color: transparent;
+  border: 3px solid var(--white);
   border-radius: 5px;
-  text-align: center;
-  width: 100%;
-  padding: 0.5rem;
-  box-sizing: border-box;
-}
-
-.input_field input:focus {
-  border-color: var(--purple-1);
-  box-shadow: none;
-}
-
-.input_field input:focus:hover {
-  border-color: black;
-}
-
-.input_field button {
-  color: white;
-  background-color: var(--gray-3);
-  border: 3px solid var(--gray-3);
   transition: transform 0.2s, height 0.2s;
   transform-origin: bottom;
+  padding: 0.5rem;
 }
 
-.input_field button:hover {
-  transform: scaleY(0.95);
+.leave_button:hover {
+  transform: scaleY(0.95) translateX(-50%);
   cursor: pointer;
 }

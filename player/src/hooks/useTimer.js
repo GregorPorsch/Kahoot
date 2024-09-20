@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 
 const useTimer = (initialTime, onTimeUp) => {
   const [timer, setTimer] = useState(initialTime);
-  const [splitTime, setSplitTime] = useState(null);
+  const [splitTime, setSplitTime] = useState(initialTime);
   const intervalRef = useRef(null);
   const startTimeRef = useRef(null);
 
