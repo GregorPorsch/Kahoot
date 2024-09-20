@@ -1,0 +1,59 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
+:root {
+  --white: #ffffff;
+  --black: #000000;
+
+  --gray-0: #d3d3d3;
+  --gray-1: #e0e0e0;
+  --gray-2: #a9a9a9;
+  --gray-3: #36454f;
+
+  --purple-0: #c2a5df;
+  --purple-1: #864cbf;
+  --purple-2: #46178f;
+  --purple-3: #25076b;
+
+  --blue-0: #a2d1f2;
+  --blue-1: #45a3e5;
+  --blue-2: #1368ce;
+  --blue-3: #0542b9;
+
+  --teal-0: #99e5e5;
+  --teal-1: #33cccc;
+  --teal-2: #Oaa3a3;
+  --teal-3: #028282;
+
+  --green-0: #b2df9c;
+  --green-1: #66bf39;
+  --green-2: #26890c;
+  --green-3: #106b03;
+
+  --red-0: #ff99aa;
+  --red-1: #ff3355;
+  --red-2: #fa2146;
+  --red-3: #c60929;
+
+  --orange-0: #fad09e;
+  --orange-1: #f5a23d;
+  --orange-2: #eb670f;
+  --orange-3: #e24104;
+
+  --yellow-0: #ffdd33;
+  --yellow-1: #ffc00a;
+  --yellow-2: #ffa602;
+  --yellow-3: #d89e00;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
